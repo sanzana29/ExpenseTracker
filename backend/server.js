@@ -606,3 +606,12 @@ app.put("/api/update-password", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+const path = require("path");
+
+// Serve static files from React build folder
+app.use(express.static(path.join(__dirname, "../src/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../src/build/index.html"));
+});

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { FaTrash } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
-import Modal from '../components/DeletePopup'; // Adjust the path if needed
+import Modal from "../components/DeletePopup"; // Adjust the path if needed
 
 const ExpenseContainer = styled.div`
   padding: 20px;
@@ -25,7 +25,7 @@ const Heading = styled.h1`
 `;
 
 const TotalExpenseContainer = styled.div`
- margin-top: 10px;
+  margin-top: 10px;
   padding: 20px;
   background-color: #181818;
   color: #fff;
@@ -362,7 +362,8 @@ const Expense = () => {
     <ExpenseContainer>
       <Heading>Expense</Heading>
       <TotalExpenseContainer>
-      <span className="total-text">Total Income:</span> Rs. {formatAmount(displayedTotal)}
+        <span className="total-text">Total Expense:</span> Rs.{" "}
+        {formatAmount(displayedTotal)}
       </TotalExpenseContainer>
       <CardWrapper>
         <Card>
@@ -457,7 +458,7 @@ const Expense = () => {
           </Table>
         </TableContainer>
       </CardWrapper>
-      
+
       {showModal && (
         <Modal
           message="Are you sure you want to delete this expense?"

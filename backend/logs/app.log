@@ -19,3 +19,33 @@
 {"level":"info","message":"Request Body: {\"fullname\":\"Ganguli Pehara\",\"useremail\":\"ganguli55@gmail.com\",\"telephone\":\"0711888607\",\"password\":\"20020904Mat\"}","timestamp":"2024-10-19T08:36:33.239Z"}
 {"level":"info","message":"Hashed Password: $2b$10$lKahIPsKmmfzAXTvkGmCYuoxtXM/zTBNJK9KBBK8ITJErvrUg98yS","timestamp":"2024-10-19T08:36:33.472Z"}
 {"level":"info","message":"User registered successfully: Ganguli Pehara (ganguli55@gmail.com)","timestamp":"2024-10-19T08:36:33.487Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"sanzana\",\"useremail\":\"sanzana@test.com\",\"telephone\":\"0712345678\",\"password\":\"qwerty123\"}","timestamp":"2025-04-13T19:34:31.542Z"}
+{"level":"info","message":"Hashed Password: $2b$10$y1rcpNfyohhso4TLMkDgo.jVQVX5MykjlOsTkYx2HOlck406ZrtUm","timestamp":"2025-04-13T19:34:31.762Z"}
+{"level":"info","message":"User registered successfully: sanzana (sanzana@test.com)","timestamp":"2025-04-13T19:34:31.783Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"sanzana\",\"useremail\":\"tester@test.com\",\"telephone\":\"0712345678\",\"password\":\"tester123\"}","timestamp":"2025-04-13T19:38:09.605Z"}
+{"level":"info","message":"Hashed Password: $2b$10$bh/aTAoc1PXTnPmHzhA2Te0Dfi3zMcsk5u2FeJRHKgpfwW3rsrHpG","timestamp":"2025-04-13T19:38:09.788Z"}
+{"level":"info","message":"User registered successfully: sanzana (tester@test.com)","timestamp":"2025-04-13T19:38:09.791Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"test\",\"useremail\":\"tester@test.com\",\"telephone\":\"0723456789\",\"password\":\"tester1234\"}","timestamp":"2025-04-13T19:50:58.243Z"}
+{"level":"info","message":"Hashed Password: $2b$10$KsoiLLL759Ljj9tjRC0Yoe4RD9LMnc96g.nma.fTb.TB7eCN9PMwi","timestamp":"2025-04-13T19:50:58.459Z"}
+{"level":"info","message":"User registered successfully: test (tester@test.com)","timestamp":"2025-04-13T19:50:58.466Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"tester\",\"useremail\":\"tester1@test.com\",\"telephone\":\"0712345678\",\"password\":\"tester12345\"}","timestamp":"2025-04-13T19:55:29.784Z"}
+{"level":"info","message":"Hashed Password: $2b$10$jWK8LLJcypdjnsG7ZskaNepsAn1j7Vh6V7AhpCUN2DwMj2Y6aJ.Qu","timestamp":"2025-04-13T19:55:29.986Z"}
+{"level":"info","message":"User registered successfully: tester (tester1@test.com)","timestamp":"2025-04-13T19:55:29.993Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"tester\",\"useremail\":\"tester1@test.com\",\"telephone\":\"0712345678\",\"password\":\"tester123\"}","timestamp":"2025-04-13T20:30:12.475Z"}
+{"level":"info","message":"Hashed Password: $2b$10$NIySQ0fDxRzrEZcmOhvRjOsChTQQWfjP9YwUB.hIEv96BZeNDkxPK","timestamp":"2025-04-13T20:30:12.543Z"}
+{"level":"info","message":"User registered successfully: tester (tester1@test.com)","timestamp":"2025-04-13T20:30:12.546Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:33.247Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:45.915Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:47.496Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:47.667Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:47.852Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:48.033Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:48.230Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:48.418Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:48.598Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:35:48.773Z"}
+{"level":"info","message":"Request Body: {\"fullname\":\"sanzana\",\"useremail\":\"sanz29@gmail.com\",\"telephone\":\"0712345678\",\"password\":\"12345678\"}","timestamp":"2025-04-13T20:43:15.197Z"}
+{"level":"info","message":"Hashed Password: $2b$10$UpFeDv.cwYJkuPRUJX2e4eLgQW9OGFxdIQJP2ykpk6tyRjaJ96Kyu","timestamp":"2025-04-13T20:43:15.292Z"}
+{"level":"info","message":"User registered successfully: sanzana (sanz29@gmail.com)","timestamp":"2025-04-13T20:43:15.295Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:47:20.977Z"}
+{"level":"warn","message":"Unauthorized access attempt to update password.","timestamp":"2025-04-13T20:47:23.458Z"}

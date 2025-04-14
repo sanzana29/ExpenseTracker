@@ -7,6 +7,8 @@ const bcrypt = require("bcrypt");
 const logger = require("./logger");
 require("dotenv").config();
 
+const { Client } = require("pg");
+
 const app = express();
 const port = 3001;
 
@@ -50,22 +52,23 @@ app.use((req, res, next) => {
   next();
 });
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+// Set up the connection configuration
+const client = new Client({
+  host: process.env.DB_HOST, // Database host from the .env file
+  port: process.env.DB_PORT, // Database port from the .env file
+  user: process.env.DB_USER, // Database user from the .env file
+  password: process.env.DB_PASSWORD, // Database password from the .env file
+  database: process.env.DB_NAME, // Database name from the .env file
 });
 
-db.connect((err) => {
-  if (err) {
-    console.log("Database connection failed:", err);
-  } else {
-    console.log("Database connected!");
+client
+  .connect()
+  .then(() => console.log("Connected to PostgreSQL database"))
+  .catch((err) => console.error("Database connection error:", err.stack));
 
-    // Create users table
-    db.query(
-      `
+// Create users table
+client.query(
+  `
       CREATE TABLE IF NOT EXISTS user (
         id INT AUTO_INCREMENT PRIMARY KEY,
         fullname VARCHAR(255),
@@ -74,15 +77,15 @@ db.connect((err) => {
         telephone VARCHAR(15)
       )
     `,
-      (err) => {
-        if (err) console.error("Failed to create user table:", err);
-        else console.log("Users table ready");
-      }
-    );
+  (err) => {
+    if (err) console.error("Failed to create user table:", err);
+    else console.log("Users table ready");
+  }
+);
 
-    // Create income table
-    db.query(
-      `
+// Create income table
+client.query(
+  `
       CREATE TABLE IF NOT EXISTS income (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -94,15 +97,15 @@ db.connect((err) => {
         FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
       )
     `,
-      (err) => {
-        if (err) console.error("Failed to create income table:", err);
-        else console.log("Income table ready");
-      }
-    );
+  (err) => {
+    if (err) console.error("Failed to create income table:", err);
+    else console.log("Income table ready");
+  }
+);
 
-    // Create expense table
-    db.query(
-      `
+// Create expense table
+client.query(
+  `
       CREATE TABLE IF NOT EXISTS expense (
         eid INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -114,15 +117,15 @@ db.connect((err) => {
         FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
       )
     `,
-      (err) => {
-        if (err) console.error("Failed to create expense table:", err);
-        else console.log("Expense table ready");
-      }
-    );
+  (err) => {
+    if (err) console.error("Failed to create expense table:", err);
+    else console.log("Expense table ready");
+  }
+);
 
-    // Create reminder table
-    db.query(
-      `
+// Create reminder table
+client.query(
+  `
       CREATE TABLE IF NOT EXISTS reminder (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -133,20 +136,18 @@ db.connect((err) => {
         FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
       )
     `,
-      (err) => {
-        if (err) console.error("Failed to create reminder table:", err);
-        else console.log("Reminder table ready");
-      }
-    );
+  (err) => {
+    if (err) console.error("Failed to create reminder table:", err);
+    else console.log("Reminder table ready");
   }
-});
+);
 
 // Income Routes
 app.post("/api/income", (req, res) => {
   const { title, amount, date, category, reference } = req.body;
   const sqlInsert =
     "INSERT INTO income (title, amount, idate, category, reference) VALUES (?, ?, ?, ?, ?)";
-  db.query(
+  client.query(
     sqlInsert,
     [title, amount, date, category, reference],
     (err, result) => {
@@ -162,7 +163,7 @@ app.post("/api/income", (req, res) => {
 app.get("/api/income/latest", (req, res) => {
   const query =
     "SELECT id, title, amount, idate AS date FROM income ORDER BY idate DESC";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching latest income:", err);
       res.status(500).send({ err: err });
@@ -178,7 +179,7 @@ app.put("/api/income/:id", (req, res) => {
   const { title, amount, date, category, reference } = req.body;
   const sqlUpdate =
     "UPDATE income SET title = ?, amount = ?, idate = ?, category = ?, reference = ? WHERE id = ?";
-  db.query(
+  client.query(
     sqlUpdate,
     [title, amount, date, category, reference, id],
     (err, result) => {
@@ -193,7 +194,7 @@ app.put("/api/income/:id", (req, res) => {
 app.delete("/api/income/:id", (req, res) => {
   const { id } = req.params;
   const sqlDelete = "DELETE FROM income WHERE id = ?";
-  db.query(sqlDelete, [id], (err, result) => {
+  client.query(sqlDelete, [id], (err, result) => {
     if (err) {
       res.status(500).send({ err: err });
       return;
@@ -207,7 +208,7 @@ app.delete("/api/income/:id", (req, res) => {
 app.get("/api/income/overtime", (req, res) => {
   const query =
     "SELECT idate AS date, SUM(amount) AS total FROM income GROUP BY idate ORDER BY idate";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching income over time:", err);
       res.status(500).send({ err: err });
@@ -220,7 +221,7 @@ app.get("/api/income/overtime", (req, res) => {
 app.get("/api/expense/overtime", (req, res) => {
   const query =
     "SELECT edate AS date, SUM(eamount) AS total FROM expense GROUP BY edate ORDER BY edate";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching expense over time:", err);
       res.status(500).send({ err: err });
@@ -235,7 +236,7 @@ app.post("/api/expense", (req, res) => {
   const { title, amount, date, category, reference } = req.body;
   const sqlInsert =
     "INSERT INTO expense (etitle, eamount, edate, ecategory, ereference) VALUES (?, ?, ?, ?, ?)";
-  db.query(
+  client.query(
     sqlInsert,
     [title, amount, date, category, reference],
     (err, result) => {
@@ -251,7 +252,7 @@ app.post("/api/expense", (req, res) => {
 app.get("/api/expense/latest", (req, res) => {
   const query =
     "SELECT eid, etitle, eamount, edate AS date FROM expense ORDER BY edate DESC";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching latest expenses:", err);
       res.status(500).send({ err: err });
@@ -266,7 +267,7 @@ app.put("/api/expense/:id", (req, res) => {
   const { title, amount, date, category, reference } = req.body;
   const sqlUpdate =
     "UPDATE expense SET etitle = ?, eamount = ?, edate = ?, ecategory = ?, ereference = ? WHERE eid = ?";
-  db.query(
+  client.query(
     sqlUpdate,
     [title, amount, date, category, reference, id],
     (err, result) => {
@@ -282,7 +283,7 @@ app.put("/api/expense/:id", (req, res) => {
 app.delete("/api/expense/:id", (req, res) => {
   const { id } = req.params;
   const sqlDelete = "DELETE FROM expense WHERE eid = ?";
-  db.query(sqlDelete, [id], (err, result) => {
+  client.query(sqlDelete, [id], (err, result) => {
     if (err) {
       res.status(500).send({ err: err });
       return;
@@ -294,7 +295,7 @@ app.delete("/api/expense/:id", (req, res) => {
 app.get("/api/income/categories", (req, res) => {
   const query =
     "SELECT category, SUM(amount) as total FROM income GROUP BY category";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching income by category:", err);
       res.status(500).send({ err: err });
@@ -307,7 +308,7 @@ app.get("/api/income/categories", (req, res) => {
 app.get("/api/expense/categories", (req, res) => {
   const query =
     "SELECT ecategory as category, SUM(eamount) as total FROM expense GROUP BY ecategory";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching expense by category:", err);
       res.status(500).send({ err: err });
@@ -325,7 +326,7 @@ app.get("/api/income/monthly", (req, res) => {
     GROUP BY month
     ORDER BY month
   `;
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching monthly income:", err);
       res.status(500).send({ err: err });
@@ -343,7 +344,7 @@ app.get("/api/expense/monthly", (req, res) => {
     GROUP BY month
     ORDER BY month
   `;
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching monthly expense:", err);
       res.status(500).send({ err: err });
@@ -363,7 +364,7 @@ app.get("/api/transactions", (req, res) => {
     FROM expense 
     ORDER BY date 
   `;
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching transactions:", err);
       res.status(500).send({ err: err });
@@ -383,7 +384,7 @@ app.get("/api/transactions/recent", (req, res) => {
     FROM expense 
     ORDER BY date DESC
   `;
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error("Error fetching recent transactions:", err);
       res.status(500).send({ err: err });
@@ -398,7 +399,7 @@ app.post("/api/reminder", (req, res) => {
   const { rtype, rpayment, ramount, rdate } = req.body; // Add rtype to destructuring
   const sqlInsert =
     "INSERT INTO reminder (rtype, rpayment, ramount, rdate) VALUES (?, ?, ?, ?)";
-  db.query(sqlInsert, [rtype, rpayment, ramount, rdate], (err, result) => {
+  client.query(sqlInsert, [rtype, rpayment, ramount, rdate], (err, result) => {
     if (err) {
       console.error("Error inserting data:", err);
       res.status(500).send("Server error");
@@ -414,22 +415,26 @@ app.put("/api/reminder/:id", (req, res) => {
 
   const sqlUpdate =
     "UPDATE reminder SET rtype = ?, rpayment = ?, ramount = ?, rdate = ? WHERE id = ?";
-  db.query(sqlUpdate, [rtype, rpayment, ramount, rdate, id], (err, result) => {
-    if (err) {
-      console.error("Error updating data:", err);
-      res.status(500).send("Server error");
-    } else if (result.affectedRows === 0) {
-      // No rows were updated, meaning the ID might not exist
-      res.status(404).send("Reminder not found");
-    } else {
-      res.status(200).send("Reminder updated successfully");
+  client.query(
+    sqlUpdate,
+    [rtype, rpayment, ramount, rdate, id],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating data:", err);
+        res.status(500).send("Server error");
+      } else if (result.affectedRows === 0) {
+        // No rows were updated, meaning the ID might not exist
+        res.status(404).send("Reminder not found");
+      } else {
+        res.status(200).send("Reminder updated successfully");
+      }
     }
-  });
+  );
 });
 
 app.get("/api/reminders", (req, res) => {
   const sqlSelect = "SELECT rtype, rpayment, ramount, rdate FROM reminder";
-  db.query(sqlSelect, (err, result) => {
+  client.query(sqlSelect, (err, result) => {
     if (err) {
       console.error("Error fetching data:", err);
       res.status(500).send("Server error");
@@ -453,7 +458,7 @@ app.post("/api/signup", async (req, res) => {
 
     const sqlInsert =
       "INSERT INTO user (fullname, password, useremail, telephone) VALUES (?, ?, ?, ?)";
-    db.query(
+    client.query(
       sqlInsert,
       [fullname, hashedPassword, useremail, telephone],
       (err, result) => {
@@ -497,7 +502,7 @@ app.post("/api/login", async (req, res) => {
 
     // Proceed to check email and password if reCAPTCHA is successful
     const sqlSelect = "SELECT * FROM user WHERE useremail = ?";
-    db.query(sqlSelect, [email], async (err, result) => {
+    client.query(sqlSelect, [email], async (err, result) => {
       if (err) {
         console.error("Error fetching user:", err);
         return res.status(500).json({ message: "Server error" });
@@ -545,7 +550,7 @@ app.put("/api/update-password", async (req, res) => {
 
   // Fetch the user based on the session userId
   const sqlSelect = "SELECT * FROM user WHERE id = ?";
-  db.query(sqlSelect, [req.session.userId], async (err, result) => {
+  client.query(sqlSelect, [req.session.userId], async (err, result) => {
     if (err) {
       logger.error("Error fetching user for password update:", err); // Log the error
       return res.status(500).json({ message: "Server error" });
@@ -573,7 +578,7 @@ app.put("/api/update-password", async (req, res) => {
 
       // Update the password in the database
       const sqlUpdate = "UPDATE user SET password = ? WHERE id = ?";
-      db.query(
+      client.query(
         sqlUpdate,
         [hashedNewPassword, req.session.userId],
         (err, result) => {

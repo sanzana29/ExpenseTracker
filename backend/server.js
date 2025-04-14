@@ -612,6 +612,7 @@ const path = require("path");
 // Serve static files from React build folder
 app.use(express.static(path.join(__dirname, "../src/build")));
 
+// Serve React index.html for all other routes
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../src/build/index.html"));
 });
